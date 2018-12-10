@@ -1,0 +1,178 @@
+---
+title: "iTERP_V0 User Manual"
+author: "Maria Vinaixa-\\
+maria.vinaixa@manchester.ac.uk\\
+
+[SYNBIOCHEM](http://synbiochem.co.uk/), The University of Manchester"
+date: "`r Sys.Date()`"
+# output:
+#  prettydoc::html_pretty:
+#    toc: true
+#    theme: architect
+#    highlight: github
+#  pdf_document:
+#    toc: true
+#output: markdowntemplates::skeleton
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+    vignette: >
+      %\VignetteIndexEntry{valr-overview}
+      %\VignetteEngine{knitr::rmarkdown}
+      %\VignetteEncoding{UTF-8}
+#bibliography: references_rTERP.bib
+#csl: european-journal-of-endocrinology.csl
+#theme: paper
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Abstract
+
+`iTERP_V0` is a R package originally developed for high-throughput target profiling 
+of terpenes in GC-qTOF(MS) data @SYNBIOCHEM. This is the stable beta version at @SYNBIOCHEM Gitlab. More functionalities and better documentation are under development version in a totally refurbished package called `rTERP`
+
+
+## `iTERP_V0` set-up and installation
+
+Since the package is not on CRAN/Bioconductor yet, you have to install it from GitHub. Use the library() function to load the package into R and you are ready to use it
+
+
+```{r, eval=FALSE}
+# Install development version from GitLab
+if (!("devtools" %in% installed.packages())){
+  install.packages("devtools")
+}
+devtools::install_github("https://github.com/synbiochem/iTERP.git")
+#Load iTERP
+library(iTERP)
+```
+
+
+## Module 1: Quantification of target compounds
+
+
+Module 1 is intended to quantify target compounds in GC-MS full-scan acquiered data using either accurate mass (GC-TOF, GC-qTOF, GC-Orbitrap) or nominal mass (GC-single quad) instruments. Briefly, spectral data is retrieved from NIST databases or from empirically measured pure standard compounds. Then, such spectra are located in our chromatograms and selective ions are extracted from full scan data. 
+
+
+### Loading target compounds' spectral data from individual files
+
+rTERP needs a library of spectral data 
+rTERP reads the following EI-MS spectra files extensions:
+
+- **JCAMP-DX:** This is a standard file form for exchange of spectral data which together with corresponding metadata is stored as labeled fields in ASCII format (http://cedadocs.ceda.ac.uk/999/1/JCAMP-DX_format.html). A good source of JCAMP-DX EI-MS spectra can be obtained and downloaded from public repositories such as *NIST Chemistry WebBook* (https://webbook.nist.gov/chemistry/) or HMDB () where several general search options are available, i.e.,https://webbook.nist.gov/cgi/cbook.cgi?ID=C5989275&Mask=200#Mass-Spec
+
+- **MSP:** The commercial NIST database is provided in a closed format (NIST db file), but can be converted to *.msp* using the "NIST MS search" software (freeware). User-defined libraries can be created using specific sets of spectra from the NIST/EPA/NIH Main  through the **Librarian tab**.  (see https://chemdata.nist.gov/mass-spc/ms-search/docs/Ver20Man.pdf for furhter details). In brief, first you can use  **Search tab** to localize correponding NIST/EPA/NIH Main DB# ID (i.e., 33687 for limonene) to your targets. Using this ID you can use **Export from libraries** option from **Librarian tab**  toolbar to import a subset of NIST/EPA/NIH Main spectra in to the Spec List. Once in the Spec List, the subset can be exported to a .MSP standard format using "Export" option. Once created rTERP can read through these libraries. 
+
+### Loading target compounds using internal rTERP libraries
+
+The widest collection of publicily available EI-MS mass spectral data in  **.msp** format  can be accessed from RIKEN site http://prime.psc.riken.jp/Metabolomics_Software/MS-DIAL/index.html. Notice that **.msp** formats from NIST and Mass Bank-RIKEN  slightly differ. All of public records (~15000 including MoNA, MassBank RT, RI and EI mass spectra) can be parsed to a rTERP.L object (the S4 rTERP internal object defining spectral libraries). Follow the instructions to be able to use such as comprehensive spectral repository as a source of mass spectral data within rTERP.
+
+
+```{r, eval=FALSE}
+#Declare a new object of class rTERP.L
+Riken_ALK <- new("rTERP.L")
+#Parse your Mass-Bank-type .msp spectral library using msp2lib
+Riken_ALK <- msp2lib(file.msp = "Mass_Spectral_Libraries/GCMSDB_AllPublic-KovatsRI-VS2.msp", rTERP.Lib = Riken_ALK)
+#Save it for further access
+save(Riken_ALK, file = "Mass_Spectral_Libraries/RIKEN_ALK.RData")
+```
+
+
+
+
+#### Terpenoids specific libraries
+
+The unique mass spectral library "Terpenoids and Related Constituents of Essential Oils" covers approximately 2000 compounds commonly found in essential oils, particularly monoterpenes, sesqurTERPene hydrocarbons, oxygenated sesqurTERPenes, drTERPenes and related aromatic and aliphatic constituents like esters, lactones, epoxides and ethers complemented with some common aroma chemicals used in the flavour and fragrance field. Each entry consists of the mass spectrum, substance name, molecular formula, graphical chemical structure and retention index on a non-polar stationary phase (DB 1). All mass spectra are measured on a high-quality double-focusing sector field instrument and are excellently compatible with all common quadrupole instruments.
+
+
+
+
+Complete list of library entries of the Terpenoids Library (https://massfinder.com/wiki/Terpenoids_Library_List)
+
+
+
+
+Target compounds can be either loaded 
+
+
+
+#### MS spectra of target compounds
+
+The ASCII text version of the library is composed of spectra in the .msp file format,
+
+
+## Retention index (RI) computation
+
+
+Experimental RI median±deviation (#data) 
+Semi-standard non-polar:	1030±2 (1005)
+Standard non-polar:     	1023±4 (703)
+Polar:                  	1200±7 (759)
+
+
+The difficulties that arise in the GC-MS peak identification of these complex samples is due to the fact that many terpenes have identical mass spectra. This is a consequence of similarities both in the initial isoprene molecule or in the fragmentation patterns and rearrangements after ionization. Hence, MS identification of these compounds should always be accompanied by retention time information that may support MS library search results.
+
+
+Abstract: (1) Retention indices are relative retention times normalised to closely eluting n-alkanes. Retention indices are system independent and long-term reproducible, even after many years and in different laboratories around the world. (2) Identifying peaks by library searches should not solely focus on mass spectral similarity, but also include retention indices in order to optimise the quality and reliablitity of library hits. Many isomeric compounds like sesqurTERPene hydrocarbons can only be identified if taking both mass spectra and retention indices into account.
+
+
+
+The retention index of a certain chemical compound is its retention time normalised to the retention times of adjacently eluting n-alkanes. While retention times vary with the individual chromatographic system (e.g. with regards to column length, film thickness, diameter, carrier gas velocity and pressure, and void time), the derived retention indices are quite independent of these parameters and allow comparing values measured by different analytical laboratories under varying conditions. Tables of retention indices can help identify components by comparing experimentally found retention indices with known values.
+
+## Target compounds database
+
+-target compounds
+
+## Styles
+
+The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+
+    output: 
+      rmarkdown::html_vignette:
+        css: mystyles.css
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+### Parser to Riken EI-MS library
+
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))
+
+## References
