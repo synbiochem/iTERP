@@ -27,4 +27,3 @@ iTERPSet <- runAll(object = iTERPSet, rt.window = 1)
 
 # 5- Retrieve areas
 R <- data.frame(t(as.data.frame(lapply(iTERPSet@As, function(x) x))))
-
