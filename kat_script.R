@@ -9,13 +9,13 @@ devtools::install_github("https://github.com/synbiochem/iTERP.git")
 # 2-Load iTERP
 library(iTERP)
 
-# 3-Load targets
+# 3-Load targets. You will be asked to redirect to the files where .MSP files for pure standards are allocated
 iTERPSet <- NIST2targets(rt.sel = T, ion.sel = T)
 
 # optional step: you might want to plot target spectra for each target
 plotMSLibraryTargets(object=iTERPSet,n.target=4, mz.min = 35, mz.max = 200)
 
-# 4- Run all (extract ion chromatograms for selective ions and integrate)
+# 4- Run all. You will be asked for the directory where mzXML files are. Extract ion chromatograms for selective ions and integration are calaculted for all mzXML files in the directory
 iTERPSet <- runAll(object = iTERPSet, rt.window = 1)
 
 # 5- Retrieve areas
