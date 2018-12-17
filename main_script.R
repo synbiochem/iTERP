@@ -11,7 +11,7 @@ devtools::build(binary = FALSE)
 pkgdown::build_site()
 
 ####This is to intall the package from gitlab#############
-devtools::install_github("https://github.com/synbiochem/iTERP.git")
+devtools::install_github("synbiochem/iTERP")
 
 #######This is to execute the first version of iTERP########
 library(iTERP)

@@ -4,7 +4,7 @@
 if (!("devtools" %in% installed.packages())){
   install.packages("devtools")
 }
-devtools::install_github("https://github.com/synbiochem/iTERP.git")
+devtools::install_github("synbiochem/iTERP")
 
 
 setwd("/Volumes/shared/Maria/181210_ReferenceFiles_iTERP")
